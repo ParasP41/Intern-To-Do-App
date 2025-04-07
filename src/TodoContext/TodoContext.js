@@ -9,18 +9,18 @@ export const todo = createContext({
             password: "",
         }
     ],
-    todo: [
+    todo:[ 
         {
             id: 1,
             title: "",
             description: "",
             taskpriority: "",
-        }
-    ],
+        }],
     userlogin: (user) => { },
     addTodo: (id,todo) => { },
     removeTodo: (id) => { },
     updateTodo: (id,todo) => { },
+    auth:(email,pass)=>{},
 })
 
 export default function usetodo() {

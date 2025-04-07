@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -61,9 +62,9 @@ const Navbar = () => {
 
         <div className={`${menuOpen ? 'block' : 'hidden'} w-full md:flex md:items-center md:w-auto`}>
           <ul className="flex flex-col md:flex-row md:space-x-6 mt-4 mx-4 md:mt-0">
-            <li><a href="#" className="hover:text-gray-300">Home</a></li>
-            <li><a href="#" className="hover:text-gray-300">Forecast</a></li>
-            <li><a href="#" className="hover:text-gray-300">About</a></li>
+            <li><a href='/' type="button" class="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 px-3 py-2 focus:ring-red-300 font-medium rounded-lg text-sm  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900">Log Out</a></li>
+            {/* <li><a href="#" className="hover:text-gray-300">About</a></li> */}
+            <li><a  className="hover:text-gray-300">Forecast -- </a></li>
           </ul>
 
           {weatherData && (

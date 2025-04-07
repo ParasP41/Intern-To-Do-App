@@ -28,7 +28,7 @@ export default function TaskList({ todo }) {
 
     return (
         <>
-            {/* Task Card */}
+            
             <div
                 onClick={() => setIsModalOpen(true)}
                 className="w-full max-w-sm sm:max-w-md lg:max-w-lg cursor-pointer p-4 bg-white border border-gray-200 rounded-xl shadow hover:shadow-lg transition dark:bg-gray-800 dark:border-gray-700"
@@ -47,6 +47,7 @@ export default function TaskList({ todo }) {
                     </div>
                 )}
             </div>
+            
 
             {/* Editable Modal */}
             {isModalOpen && (

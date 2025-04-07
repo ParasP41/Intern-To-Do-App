@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import usetodo from "../TodoContext/TodoContext";
 
 const TaskInput = () => {
@@ -10,15 +10,13 @@ const TaskInput = () => {
   const { addTodo } = usetodo();
 
   const handleAdd = () => {
-  
     addTodo(Date.now(), title, description, priority);
-  
     setTitle("");
     setDescription("");
     setPriority("normal");
     setExpanded(false);
   };
-  
+
 
   return (
     <div className="w-full max-w-xl mx-auto mt-10 bg-white rounded-2xl shadow-md p-4 transition-all duration-300">
