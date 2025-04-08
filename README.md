@@ -55,14 +55,17 @@ src/
 - **Tailwind CSS**
 - **Context API**
 - **LocalStorage**
+- **Flowbite**
+- **React Icons**
+
 
 ## 🛠️ Installation
 
 ```bash
-git clone https://github.com/yourusername/react-auth-todo-app.git
-cd react-auth-todo-app
+git clone "https://github.com/ParasP41/To-Do-App.git"
+cd To-Do-App
 npm install
-npm start
+npm run dev
 ```
 
 ## 🧪 Usage
