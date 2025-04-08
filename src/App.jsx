@@ -1,133 +1,158 @@
-import React, { useEffect, useState } from 'react'
-import { initFlowbite } from 'flowbite'
-import Navbar from './Components/Navbar'
-import { Todoprovider } from './TodoContext/TodoContext'
-import LoginIn from './Components/LoginIn'
-import TaskList from './Components/TaskList'
-import TaskInput from './Components/TaskInput'
-import SignUp from './Components/SignUp'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import React, { useEffect, useState } from 'react';
+import { initFlowbite } from 'flowbite'; 
+import { Todoprovider } from './TodoContext/TodoContext'; 
+import SignUp from './Components/SignUp'; 
+import LoginIn from './Components/LoginIn'; 
+import TaskPage from './Components/TaskPage'; 
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
 export default function App() {
+  // App-wide states
   const [user, setUser] = useState([]);
-  const [todo, setTodo] = useState([]);
-  const [initialized, setInitialized] = useState(false);
-  
-  
+  const [todo, setTodo] = useState([]); 
+  const [initialized, setInitialized] = useState(false); 
+  const [currentUser, setCurrentUser] = useState(null); 
 
+  // Routes setup
   const router = createBrowserRouter([
-    {
-      path: "/",
-      element: <><SignUp /></>,
-    },
-    {
-      path: '/signup',
-      element: <><LoginIn /></>,
-    },
-    {
-      path: '/login',
-      element: <><SignUp /></>,
-    },
-    {
-      path: '/tasklist',
-      element: <> <Navbar />
-        <TaskInput /></>,
-    }
-  ])
+    { path: '/', element: <SignUp /> },          
+    { path: '/signup', element: <LoginIn /> },   
+    { path: '/login', element: <SignUp /> },    
+    { path: '/tasklist', element: <TaskPage /> } 
+  ]);
 
-
-
-  //Local storage Setup
+  // Load users and todos from localStorage once when app starts
   useEffect(() => {
     const storedUser = JSON.parse(localStorage.getItem('user')) || [];
-    const storedTodo = JSON.parse(localStorage.getItem('todo')) || [];
+    const storedCurrentUser = JSON.parse(localStorage.getItem('currentUser')) || null;
+
     setUser(storedUser);
-    setTodo(storedTodo);
+    setCurrentUser(storedCurrentUser);
+
+    // Load current user's todos from localStorage
+    if (storedCurrentUser) {
+      const storedTodo = JSON.parse(localStorage.getItem(`todos-${storedCurrentUser}`)) || [];
+      setTodo(storedTodo);
+    }
+
     setInitialized(true);
   }, []);
 
+  // Save users and todos to localStorage when they change
   useEffect(() => {
     if (initialized) {
       localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('todo', JSON.stringify(todo));
+      if (currentUser) {
+        localStorage.setItem(`todos-${currentUser}`, JSON.stringify(todo));
+      }
     }
-  }, [user, todo, initialized]);
+  }, [user, todo, initialized, currentUser]);
 
-  //to sign up the user
+  // Handle Sign up registration
   const userlogin = (fname, lname, email, password) => {
-    const userData = {
-      firstname: fname,
-      lastname: lname,
-      email: email,
-      password: password,
-    };
-    setUser((prevUser) => [...prevUser, userData]);
+    const alreadyExists = user.some((u) => u.email === email);
+    if (alreadyExists) {
+      alert('User already exists');
+      return false;
+    }
+
+    // Add new user
+    const newUser = { firstname: fname, lastname: lname, email, password };
+    const updatedUsers = [...user, newUser];
+    setUser(updatedUsers);
+    setCurrentUser(email);
+    localStorage.setItem('user', JSON.stringify(updatedUsers));
+    localStorage.setItem('currentUser', JSON.stringify(email));
+
+    // Clear their todos for a fresh start
+    setTodo([]);
+    localStorage.setItem(`todos-${email}`, JSON.stringify([]));
+    return true;
   };
 
-  //to log in the user
-  const auth = (email, password) => {
-    const foundUser = user.find(item => item.email === email && item.password === password);
+  // Check if email is unique (used during signup)
+  const checkuser = (email) => {
+    return !user.some((u) => u.email === email);
+  };
 
-    if (foundUser) {
-      alert("User logged in Successfully");
-      return true
+  //check for the log in
+  const auth = (email, password) => {
+    const found = user.find((u) => u.email === email && u.password === password);
+    if (found) {
+      setCurrentUser(email);
+      localStorage.setItem('currentUser', JSON.stringify(email));
+
+      // Load user's todos
+      const todos = JSON.parse(localStorage.getItem(`todos-${email}`)) || [];
+      setTodo(todos);
+      return true;
     } else {
-      alert("Invalid user : please Sign Up");
-      return false
+      alert('Invalid credentials');
+      return false;
     }
   };
 
-  //to add the bew todo
+  // Add a new todo
   const addTodo = (id, title, description, taskpriority) => {
-    const todoData = {
-      id: id,
-      title: title,
-      description: description,
-      taskpriority: taskpriority
-    };
-    setTodo((prevTodos) => [...prevTodos, todoData]);
+    const newTodo = { id, title, description, taskpriority };
+    const updated = [...todo, newTodo];
+    setTodo(updated);
+
+    // Saving current user to localStorage
+    if (currentUser) {
+      localStorage.setItem(`todos-${currentUser}`, JSON.stringify(updated));
+    }
   };
 
-  //delete the todo
+  // Delete todo
   const removeTodo = (id) => {
-    setTodo((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
+    const updated = todo.filter((t) => t.id !== id);
+    setTodo(updated);
+    if (currentUser) {
+      localStorage.setItem(`todos-${currentUser}`, JSON.stringify(updated));
+    }
   };
 
-  //for update the todo
+  // Update the todo
   const updateTodo = (id, title, description, taskpriority) => {
-    setTodo((prevTodos) =>
-      prevTodos.map((todo) =>
-        todo.id === id
-          ? { ...todo, title, description, taskpriority }
-          : todo
-      )
+    const updated = todo.map((t) =>
+      t.id === id ? { ...t, title, description, taskpriority } : t
     );
+    setTodo(updated);
+    if (currentUser) {
+      localStorage.setItem(`todos-${currentUser}`, JSON.stringify(updated));
+    }
   };
 
-  //flowbite
+  // Logout user
+  const logout = () => {
+    setCurrentUser(null);
+    setTodo([]);
+    localStorage.removeItem('currentUser');
+  };
+
+  // Initialize Flowbite 
   useEffect(() => {
     initFlowbite();
   }, []);
 
+  // Wrap app with context provider and router
   return (
-    <Todoprovider value={{
-      user,
-      todo,
-      userlogin,
-      addTodo,
-      removeTodo,
-      updateTodo,
-      auth,
-    }}>
+    <Todoprovider
+      value={{
+        user,
+        todo,
+        currentUser,
+        userlogin,
+        addTodo,
+        removeTodo,
+        updateTodo,
+        auth,
+        checkuser,
+        logout,
+      }}
+    >
       <RouterProvider router={router} />
-      {window.location.pathname === "/tasklist" && <div className='grid my:p-10 md:px-4 p-3 lg:grid-cols-5 md:grid-cols-4 sm:grid-cols-3 place-item-center gap-4'>
-        {todo.map((todo) => (
-          <TaskList
-            key={todo.id}
-            todo={todo}
-          />
-        ))}
-      </div>}
     </Todoprovider>
   );
 }

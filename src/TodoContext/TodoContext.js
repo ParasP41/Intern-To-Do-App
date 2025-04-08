@@ -9,22 +9,25 @@ export const todo = createContext({
             password: "",
         }
     ],
-    todo:[ 
+    currentUser: null,
+    todo: [ 
         {
             id: 1,
             title: "",
             description: "",
             taskpriority: "",
-        }],
+        }
+    ],
     userlogin: (user) => { },
-    addTodo: (id,todo) => { },
+    addTodo: (id, title, description, taskpriority) => { },
     removeTodo: (id) => { },
-    updateTodo: (id,todo) => { },
-    auth:(email,pass)=>{},
+    updateTodo: (id, title, description, taskpriority) => { },
+    auth: (email, pass) => { },
+    checkuser: (email) => { },
 })
 
 export default function usetodo() {
-    return useContext(todo)
+    return useContext(todo);
 }
 
 export const Todoprovider = todo.Provider;

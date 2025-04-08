@@ -2,32 +2,38 @@ import React, { useEffect, useState } from "react";
 import usetodo from "../TodoContext/TodoContext";
 
 const TaskInput = () => {
-  const [expanded, setExpanded] = useState(false);
-  const [title, setTitle] = useState("");
+  
+  const [expanded, setExpanded] = useState(false); 
+  const [title, setTitle] = useState("");          
   const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState("normal");
+  const [priority, setPriority] = useState("normal"); 
 
+  // method from context
   const { addTodo } = usetodo();
 
+  // Function to add a new task
   const handleAdd = () => {
-    addTodo(Date.now(), title, description, priority);
-    setTitle("");
-    setDescription("");
-    setPriority("normal");
-    setExpanded(false);
+    addTodo(Date.now(), title, description, priority); 
+    setTitle("");             
+    setDescription("");       
+    setPriority("normal");     
+    setExpanded(false);        
   };
-
 
   return (
     <div className="w-full max-w-xl mx-auto mt-10 bg-white rounded-2xl shadow-md p-4 transition-all duration-300">
+      
+      
       {!expanded ? (
         <input
-          onFocus={() => setExpanded(true)}
+          onFocus={() => setExpanded(true)} 
           placeholder="Add a task..."
           className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
         />
       ) : (
+       
         <div className="space-y-4">
+          {/* Title input */}
           <input
             type="text"
             placeholder="Task Title"
@@ -36,6 +42,8 @@ const TaskInput = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
             autoFocus
           />
+
+         
           <textarea
             placeholder="Description"
             value={description}
@@ -43,7 +51,10 @@ const TaskInput = () => {
             rows={3}
             className="w-full px-4 py-2 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
           />
+
+        
           <div className="flex items-center justify-between">
+           
             <select
               value={priority}
               onChange={(e) => setPriority(e.target.value)}
@@ -53,6 +64,8 @@ const TaskInput = () => {
               <option value="normal">Normal</option>
               <option value="high">High</option>
             </select>
+
+          
             <div className="flex gap-2">
               <button
                 onClick={handleAdd}
@@ -61,7 +74,7 @@ const TaskInput = () => {
                 Add
               </button>
               <button
-                onClick={() => setExpanded(false)}
+                onClick={() => setExpanded(false)} 
                 className="px-5 py-2 bg-gray-200 text-gray-800 rounded-xl hover:bg-gray-300 text-sm"
               >
                 Cancel
